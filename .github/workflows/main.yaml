@@ -1,0 +1,50 @@
+name: Build, Test, Run GitHub Action
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build_test_run:
+    name: Build, test and run the GitHub Action
+
+    runs-on: ubuntu-latest
+
+    env:
+      USER_AGENT: GitHubActionsPrMerge
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x'
+
+    - name: Restore NuGet packages
+      shell: bash
+      run: |
+        dotnet restore
+
+    - name: Build console app
+      shell: bash
+      run: |
+        dotnet build
+
+    - name: Test console app
+      shell: bash
+      run: |
+        dotnet test test/**/*.csproj
+
+    - name: Run the private action
+      uses: ./
+      with:
+        authToken: ${{ secrets.GITHUB_TOKEN }}
+        owner: justinyoo
+        repository: github-issue-label-action
+        issueId: '1'
+        labelsToAdd: 'bug,documentation,duplicate,enhancement,good first issue,help wanted,invalid,question,wontfix'
+        labelsToRemove: 'bug,documentation,duplicate'

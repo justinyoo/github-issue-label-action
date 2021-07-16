@@ -1,0 +1,44 @@
+name: Build and Test GitHub Action
+
+on:
+  push:
+    branches:
+    - 'release/*'
+    - 'feature/*'
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build_test:
+    name: Build and test the GitHub Action
+
+    runs-on: ubuntu-latest
+
+    env:
+      USER_AGENT: GitHubActionsPrMerge
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v1
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x'
+
+    - name: Restore NuGet packages
+      shell: bash
+      run: |
+        dotnet restore
+
+    - name: Build console app
+      shell: bash
+      run: |
+        dotnet build
+
+    - name: Test console app
+      shell: bash
+      run: |
+        dotnet test test/**/*.csproj

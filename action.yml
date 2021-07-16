@@ -1,0 +1,41 @@
+name: GitHub Issue Lable (Generic)
+author: Justin Yoo
+description: This action labels/unlables on a given issue of a given GitHub repository in the most generic way.
+
+branding:
+  icon: tag
+  color: blue
+
+inputs:
+  authToken:
+    description: GitHub authentication token
+    required: true
+  owner:
+    description: GitHub repository owner.
+    required: true
+  repository:
+    description: GitHub repository.
+    required: true
+  issueId:
+    description: GitHub issue ID for the PR.
+    required: true
+  labelsToAdd:
+    description: Comma delimited list of labels to add to the issue.
+    required: false
+    default: ''
+  labelsToRemove:
+    description: Comma delimited list of labels to remove from the issue.
+    required: false
+    default: ''
+
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    USER_AGENT: GitHubActionsIssuesLabel
+    AUTH_TOKEN: ${{ inputs.authToken }}
+    OWNER: ${{ inputs.owner }}
+    REPOSITORY: ${{ inputs.repository }}
+    ISSUE_ID: ${{ inputs.issueId }}
+    LABELS_TO_ADD: ${{ inputs.labelsToAdd }}
+    LABELS_TO_REMOVE: ${{ inputs.labelsToRemove }}
